@@ -1,17 +1,18 @@
 /**
  *敌机
  */
-function Enemy(ctx, emys) {
-    this.ctx = ctx;
+function Enemy(director) {
+    this.director=director;
+    this.ctx = director.ctx;
     this.img = new Image();
     this.imgs = ["img/enemy_small.png", "img/enemy_small_2.png", "img/enemy_small_2_special.png",
         "img/enemy_small_3.png", "img/enemy_small_4.png"];
-    this.img.src = "img/Rock.png";
-    this.x = parseInt((Math.random() * 500).toFixed(0));
-    this.y = parseInt((-Math.random() * 700).toFixed(0));
+    // this.img.src = "img/Rock.png";
+    this.x = parseInt((Math.random() * this.director.width).toFixed(0));
+    this.y = parseInt((-Math.random() * this.director.height).toFixed(0));
     this.width = 32;
     this.height = 32;
-    this.emys = emys;
+    this.emys = director.enimes;
     this.exploded = false;
     this.explodedImg = new Image();
     this.explodedImg.src = "img/explosionEnemy.png";
@@ -37,7 +38,7 @@ Enemy.prototype.draw = function () {
             44, 49);
         this.explodeIndex++;
     }
-    if (this.y > 450) {
+    if (this.y > this.director.height) {
         this.emys.remove(this);
     }
 }

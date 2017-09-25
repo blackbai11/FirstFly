@@ -13,7 +13,7 @@ function Grade(director) {
     this.exploded = false;
     this.explodedImg = new Image();
     this.explodedImg.src = "img/explosionEnemy.png";
-    this.IndexGrade = 0;
+    this.IndexGrade = 0;//当前分数
 }
 
 Grade.prototype.draw = function () {

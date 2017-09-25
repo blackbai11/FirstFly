@@ -13,7 +13,7 @@ var keyCode = {
     keySpace: 32,
     keyEnter: 13,
     keyEsc: 27,
-    key0: 96
+    keyDot: 110
 
 
 }
@@ -30,15 +30,11 @@ var keyStatus = {
     keySpaceStatus: false,
     keyEnterStatus: false,
     keyEscStatus: false,
-    key0Status: false
+    keyDotStatus: false
 }
 
-function KeyControl(director) {
-    // this.director = director;
-    var stringControl="";
+function KeyControl() {
     $(document).keydown(function (e) {
-        console.log(e.which);
-        stringControl+=e.which;
         switch (e.which) {
             case keyCode.keyLeft:
                 keyStatus.keyLeftStatus = true;
@@ -66,13 +62,12 @@ function KeyControl(director) {
                 break;
             case keyCode.keyEnter:
                 keyStatus.keyEnterStatus = true;
-                stringControl="";
                 break;
             case keyCode.keySpace:
                 keyStatus.keySpaceStatus = true;
                 break;
-            case keyCode.key0:
-                keyStatus.key0Status = true;
+            case keyCode.keyDot:
+                keyStatus.keyDotStatus = true;
                 break;
             case keyCode.keyEsc:
                 keyStatus.keyEscStatus = true;
@@ -112,8 +107,8 @@ function KeyControl(director) {
             case keyCode.keySpace:
                 keyStatus.keySpaceStatus = false;
                 break;
-            case keyCode.key0:
-                keyStatus.key0Status = false;
+            case keyCode.keyDot:
+                keyStatus.keyDotStatus = false;
                 break;
             case keyCode.keyEsc:
                 keyStatus.keyEscStatus = false;
