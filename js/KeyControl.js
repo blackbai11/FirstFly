@@ -33,7 +33,8 @@ var keyStatus = {
     keyDotStatus: true
 }
 
-function KeyControl() {
+function KeyControl(director) {
+    var game_canvas = document.getElementById("game_canvas");
     $(document).keydown(function (e) {
         switch (e.which) {
             case keyCode.keyEnter:
@@ -114,4 +115,33 @@ function KeyControl() {
                 break;
         }
     });
+    game_canvas.onmousemove = function (e) {
+        director.setmousemove(e.clientX - (document.body.clientWidth - director.width) / 2, e.clientY);//重新计算x，以画布的坐标为准
+    };
+    if (director.status === 0) {
+        game_canvas.onmousedown = function (e) {
+            director.setmousedowm(e.clientX - (document.body.clientWidth - director.width) / 2, e.clientY);//重新计算x，以画布的坐标为准
+        };
+    }
+    // game_canvas.on('touchstart',function(e) {
+    //     e = e || window.event;
+    //     // e.stopPropagation();
+    //     e.preventDefault();
+    //     director.setmousedowm(e.clientX - (document.body.clientWidth - director.width) / 2, e.clientY);//重新计算x，以画布的坐标为准
+    //
+    // },"touchMove", function (e) {
+    //     e = e || window.event;
+    //     // e.stopPropagation();
+    //     e.preventDefault();
+    //     director.setmousemove(e.clientX - (document.body.clientWidth - director.width) / 2, e.clientY);//重新计算x，以画布的坐标为准
+    // },"touchEnd", function (e) {
+    //     e = e || window.event;
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    // },"touchcancel", function (e) {
+    //     e = e || window.event;
+    //     e.stopPropagation();
+    //     e.preventDefault();
+    // });
 }
+

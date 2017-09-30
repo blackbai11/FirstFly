@@ -58,3 +58,53 @@ function logout() {
     }
 }
 
+
+
+/***
+ *
+ * @param director (用来获取canvas)
+ * @param sX 初始点X (this.x+this.width/4)
+ * @param sY 初始点Y (this.y)
+ * @param indexblood 剩余血量 (int)
+ * @param maxblood 总血量 (int)
+ * @param eX 结束点X (sX+this.width/2)
+ * @param eY 结束点Y (this.y)
+ * @param bH 血条中高度 (this.bloodH)
+ * @param bD 血条距离飞机距离 (this.Disblood)
+ * @param lineWidth 血条粗细 (int)
+ * @param strokeStyle 颜色 ("red")
+ */
+function drawBlood(director, indexblood, maxblood, sX, sY, eX, eY, bH, bD,lineWidth,strokeStyle) {
+    this.ctx = director.ctx;
+    this.ctx.lineWidth = lineWidth;
+    this.ctx.strokeStyle = strokeStyle;
+    this.ctx.moveTo(sX, sY - bH - bD);
+    this.ctx.lineTo(eX, eY - bH - bD);
+    this.ctx.moveTo(sX, sY - bD);
+    this.ctx.lineTo(eX, eY - bD);
+    this.ctx.arc(sX, sY - bH / 2 - bD, bH / 2, 0.5 * Math.PI, 1.5 * Math.PI);
+    this.ctx.arc(eX, eY - bH / 2 - bD, bH / 2, -0.5 * Math.PI, 0.5 * Math.PI);
+    this.ctx.stroke();
+    this.ctx.beginPath();
+    this.ctx.lineWidth = bH;
+    this.ctx.moveTo(sX - bH / 2, sY - bH / 2 - bD);
+    this.ctx.lineTo(sX - bH / 2 + indexblood * (eX - sX + bH) / maxblood, eY - bH / 2 - bD);
+    this.ctx.stroke();
+    // this.ctx.lineWidth = 1;
+    // this.ctx.strokeStyle = "red";
+    // this.ctx.moveTo(this.x+this.width/4, this.y-this.bloodH-this.Disblood);
+    // this.ctx.lineTo(this.x+this.width/4+this.width/2, this.y-this.bloodH-this.Disblood);
+    // this.ctx.moveTo(this.x+this.width/4, this.y-this.Disblood);
+    // this.ctx.lineTo(this.x+this.width/4+this.width/2, this.y-this.Disblood);
+    // this.ctx.arc(this.x+this.width/4,this.y-this.bloodH/2-this.Disblood,this.bloodH/2,0.5*Math.PI,1.5*Math.PI);
+    // this.ctx.arc(this.x+this.width/4+this.width/2,this.y-this.bloodH/2-this.Disblood,this.bloodH/2,-0.5*Math.PI,0.5*Math.PI);
+    // this.ctx.stroke();
+    // this. ctx.beginPath();
+    // this.ctx.lineWidth = this.bloodH;
+    // this.ctx.moveTo(this.x+this.width/4-this.bloodH/2,this.y-this.bloodH/2-this.Disblood);
+    // this.ctx.lineTo(this.x+this.width/4+this.index*0.5*this.width/this.maxindex, this.y-this.bloodH/2-this.Disblood);
+    // this. ctx.stroke();
+}
+
+
+

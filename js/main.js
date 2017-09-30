@@ -7,4 +7,6 @@ $(function () {
     director.height = director.ctx.canvas.height;
     director.choosePlayer();
 
+    //飞机按键监听
+    new KeyControl(director);
 });
