@@ -5,9 +5,9 @@ function Prop(director) {
     this.ctx = director.ctx;
     this.director = director;
     this.img = new Image();
-    this.imgs = ["img/dog.png", "img/elephants.png", "img/husky.png", "img/swans.png", "img/prop.png"];
-    this.propTypeCode = parseInt(Math.random()*(this.imgs.length-1));
-    this.img.src = this.imgs[this.propTypeCode];
+    this.emyPlaneImgs = ["img/dog.png", "img/elephants.png", "img/husky.png", "img/swans.png", "img/prop.png"];
+    this.propTypeCode = parseInt(Math.random() * this.emyPlaneImgs.length);
+    this.img.src = this.emyPlaneImgs[this.propTypeCode];
     this.x = parseInt((Math.random() * director.width).toFixed(0));
     this.y = 0;
     this.vx = 5;//速度vx，vy
@@ -37,8 +37,7 @@ Prop.prototype.draw = function () {
                 this.y + this.vy < 0) {
                 this.vy = -this.vy;
             }
-            if (this.x + this.vx > this.director.width - this.width ||
-                this.x + this.vx < 0) {
+            if (this.x + this.vx > this.director.width - this.width || this.x + this.vx < 0) {
                 this.vx = -this.vx;
             }
         }

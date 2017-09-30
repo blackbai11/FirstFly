@@ -5,7 +5,6 @@ function Player(director) {
     this.img.src = "img/Player.png";
     this.x = 0;
     this.y = 0;
-    this.bullets = director.bullets;
     this.width = 32;
     this.height = 32;
     this.exploded = false;
@@ -13,7 +12,7 @@ function Player(director) {
     this.explodedImg.src = "img/explosionEnemy.png";
     this.explodeIndex = 0;
     this.isSecondPlayer = false;
-    this.isAutoFire = true;
+    this.isAutoFire = false;
     this.PropCode = {
         Type0: 0, //默认
         Type1: 1,
@@ -21,8 +20,8 @@ function Player(director) {
         Type3: 3,
         Type4: 4
     };
+    this.bullets = director.bullets;
     this.BulletType = this.PropCode.Type0;
-    // this.BulletType = this.director.players[!this.isSecondPlayer ? 0 : 1].BulletType;
 }
 
 /**
@@ -37,15 +36,15 @@ Player.prototype.draw = function () {
             this.setKeyDirection(keyStatus.keyLeftStatus, keyStatus.keyRightStatus, keyStatus.keyUpStatus, keyStatus.keyDownStatus);
             //子弹控制
             this.setKeyBullet(keyStatus.keyDotStatus);
-            keyStatus.keyDotStatus = !keyStatus.keyDotStatus;
+            keyStatus.keyDotStatus = false;
         } else {
             //第二玩家
             this.setKeyDirection(keyStatus.keyAStatus, keyStatus.keyDStatus, keyStatus.keyWStatus, keyStatus.keySStatus);
             //子弹控制
             this.setKeyBullet(keyStatus.keyJStatus);
-            keyStatus.keyJStatus = !keyStatus.keyJStatus;
+            keyStatus.keyJStatus = false;
         }
-    } else {
+    } else {//爆炸
         if (this.explodeIndex < 10) {
             this.ctx.drawImage(this.explodedImg,
                 this.explodeIndex * 44, 0, 44, 49,
@@ -60,34 +59,35 @@ Player.prototype.draw = function () {
  * describe:发射子弹，涉及不同子弹类型
  */
 Player.prototype.fire = function (removeX, removeY) {
-    // this.BulletType = 3;
+    var temp = this;
+    var array;
     switch (this.BulletType) {
         case this.PropCode.Type0:// code0:1颗子弹
-            this.bullets.push(new Bullet(this.director, removeX, removeY,this.isSecondPlayer,0));
+            this.bullets.push(new Bullet(this.director, removeX, removeY, 0, true));
             break;
         case this.PropCode.Type1:// code1:3颗子弹
-            this.bullets.push(new Bullet(this.director, removeX, removeY,this.isSecondPlayer,0));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,-30));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,30));
+            array = [0, -30, 30];
+            array.forEach(function (t) {
+                temp.bullets.push(new Bullet(temp.director, removeX, removeY, t, true));
+            });
             break;
         case this.PropCode.Type2:// code2:散弹
-            this.bullets.push(new Bullet(this.director, removeX, removeY,this.isSecondPlayer,0));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,-15));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,-30));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,15));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,30));
+            array = [0, -15, -30, 15, 30];
+            array.forEach(function (t) {
+                temp.bullets.push(new Bullet(temp.director, removeX, removeY, t, true));
+            });
             break;
         case this.PropCode.Type3:// code3:散弹（密集）
-            this.bullets.push(new Bullet(this.director, removeX, removeY,this.isSecondPlayer,0));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,-15));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,-30));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,-45));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,15));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,30));
-            this.bullets.push(new Bullet(this.director, removeX, removeY, this.isSecondPlayer,45));
+            array = [0, -15, -30, -45, 15, 30, 45];
+            array.forEach(function (t) {
+                temp.bullets.push(new Bullet(temp.director, removeX, removeY, t, true));
+            });
             break;
         case this.PropCode.Type4:// code0:1颗子弹
-            this.bullets.push(new Bullet(this.director, removeX, removeY,this.isSecondPlayer,0));
+            array = [0, -30, -60, -90, -120, -150, -180, 30, 60, 90, 120, 150];
+            array.forEach(function (t) {
+                temp.bullets.push(new Bullet(temp.director, removeX, removeY, t, true));
+            });
             break;
     }
 };
@@ -139,12 +139,12 @@ Player.prototype.setKeyDirection = function (keyLeft, keyRight, keyUp, keyDown) 
 Player.prototype.setKeyBullet = function (keyAttack) {
     var temp = this;
     if (!this.isAutoFire) {
-        if (!keyAttack) {
+        if (keyAttack) {
             this.fire(this.x + 8, this.y - 12);
         }
     } else {
-        //自动攻击（1秒6颗子弹）
-        if (temp.director.time % 10 === 0) {
+        //自动攻击（1秒3颗子弹）
+        if (temp.director.time % 20 === 0) {
             temp.fire(temp.x + 8, temp.y - 12);
         }
     }

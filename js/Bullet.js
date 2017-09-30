@@ -1,9 +1,8 @@
 /**
  * 子弹
  */
-function Bullet(director, x, y, isSecondPlayer,angle) {
+function Bullet(director, x, y,angle,isPlayerBullet) {
     this.director = director;
-    this.isSecondPlayer = isSecondPlayer;
     this.ctx = director.ctx;
     this.img = new Image();
     this.img.src = "img/projectile.png";
@@ -11,10 +10,11 @@ function Bullet(director, x, y, isSecondPlayer,angle) {
     this.y = y;
     this.width = 16;
     this.height = 28;
-    this.bullets = director.bullets;
     this.exploded = false;
     this.speed = 10;
     this.angle = angle;
+    this.bullets = director.bullets;
+    this.isPlayerBullet = isPlayerBullet;
 }
 
 /**

@@ -27,10 +27,10 @@ var keyStatus = {
     keySStatus: false,
     keyAStatus: false,
     keyDStatus: false,
-    keyJStatus: true,
+    keyJStatus: false,
     keyEnterStatus: false,
     keyEscStatus: false,
-    keyDotStatus: true
+    keyDotStatus: false
 }
 
 function KeyControl() {

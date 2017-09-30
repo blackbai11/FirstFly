@@ -20,15 +20,9 @@ function Director() {
  */
 Director.prototype.play = function () {
     var temp = this;
-
     temp.animID = setInterval(function () {
         temp.gameLoop();
     }, 1000 / 60);
-    temp.animenimesID = setInterval(function () {
-        //5.添加敌人
-        temp.enimes.push(new Enemy(temp));
-
-    }, 1000);
     //飞机按键监听
     new KeyControl();
 }
@@ -38,11 +32,22 @@ Director.prototype.play = function () {
  */
 Director.prototype.gameLoop = function () {
     var temp = this;
-    //1.清屏
+    /**
+     * 计时设置(60=1s)
+     */
+    //一分钟清零一次
+    temp.time >= 60 * 60 ? this.time = 0 : this.time++;
+    /**
+     * 1.清屏
+     */
     temp.ctx.clearRect(0, 0, this.width, this.height);
-    //2.画背景
+    /**
+     * 2.画背景
+     */
     temp.back.draw();
-    //3.画玩家
+    /**
+     * 3.画玩家
+     */
     if (!temp.multiPlayer) {
         temp.players[0].draw();
         if (temp.players[0].animStep())
@@ -53,38 +58,54 @@ Director.prototype.gameLoop = function () {
         if (temp.players[0].animStep() && temp.players[1].animStep())
             temp.onPause();
     }
-    //4.画分数
-    temp.grade.draw();
-    //4.画敌人
-    temp.enimes.forEach(function (enime) {
-        enime.draw();
-        /***
-         * 7.飞机撞击动画
-         */
+    /**
+     * 4.画敌人
+     */
+    if (temp.time % 60 === 0) {
+        //添加敌人(1s添加一个)
+        temp.enimes.push(new Enemy(temp));
+    }
+    temp.enimes.forEach(function (emy) {
+        emy.draw();
+        //敌人与玩家碰撞检测
         temp.players.forEach(function (player) {
-            if (IsCollided(enime, player)) {
+            if (IsCollided(emy, player)) {
+                emy.exploded = true;
                 player.exploded = true;
             }
         });
-        /***
-         * 6.爆炸检测
-         */
-        temp.bullets.forEach(function (bullet) {
-            if (!enime.exploded) {
-                if (IsCollided(enime,bullet)) {
-                    console.log("打中了");
-                    enime.exploded = true;
-                    bullet.exploded = true;
-                    temp.grade.setGrade((enime.airplaneType + 1) * 1000);
-                }
-            }
-        });
-
     });
-    //5.画子弹
+    /**
+     * 5.画子弹
+     */
     temp.bullets.forEach(function (bullet) {
         bullet.draw();
+        if (bullet.isPlayerBullet) { //玩家子弹
+            //玩家子弹与敌人的碰撞检测
+            temp.enimes.forEach(function (emy) {
+                if (!bullet.exploded) {
+                    if (IsCollided(emy, bullet)) {
+                        emy.exploded = true;
+                        bullet.exploded = true;
+                        temp.grade.setGrade(100);
+                    }
+                }
+            })
+        } else { //敌人子弹
+            //敌人子弹与玩家的碰撞检测
+            temp.players.forEach(function (player) {
+                if (IsCollided(bullet, player)) {
+                    bullet.exploded = true;
+                    player.exploded = true;
+                }
+            })
+        }
     });
+    /**
+     * 6.画分数
+     */
+    temp.grade.draw();
+
 
     /***
      * 添加道具
@@ -104,11 +125,10 @@ Director.prototype.gameLoop = function () {
     /***
      * 9.吃道具
      */
-
     temp.props.forEach(function (prop) {
         temp.players.forEach(function (player) {
             if (IsCollided(prop, player)) {
-                player.BulletType =  prop.propTypeCode;
+                player.BulletType = prop.propTypeCode;
                 console.log("propTypeCode:" + prop.propTypeCode);
                 prop.exploded = true;
             }
@@ -116,14 +136,8 @@ Director.prototype.gameLoop = function () {
     });
 
 
-    temp.time++;
-    //一分钟清零一次
-    if (temp.time === 60 * 60) {
-        temp.time = 0;
-    }
-
     // if (temp.time % 60 === 0 ) {
-    //     console.log( s);
+    //     console.log(parseInt(Math.random() * (3)));
     // }
 
 };
