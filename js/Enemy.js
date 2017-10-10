@@ -27,22 +27,24 @@ function Enemy(director) {
     this.BulletType = 0;
     this.angle = 0;
     this.initX = this.x;//记录初始值x坐标
+    this.indexY = this.y;
     // this.moveX = parseInt(Math.random() * 5); //随机偏移X
-    this.moveX = 5; //随机偏移X
+    this.moveX = 2; //随机偏移X
+
+    this.indexblood=500;
+    this.maxblood=500;
 }
 
 /**
  * 画敌人
  */
 Enemy.prototype.draw = function () {
-    // this.EnemyType = 2;
+    // this.EnemyType = 3;
+    // console.log(this.EnemyType);
     //根据类型确定敌机
     if (!this.exploded) {
         switch (this.EnemyType) {
             case this.EnemyCode.Type0://障碍物（eg：陨石）
-                this.img.src = "img/Rock.png";
-                this.width = this.img.width * 2 / 3;
-                this.height = this.img.height * 2 / 3;
                 //旋转绘制
                 this.ctx.save();
                 this.ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
@@ -59,10 +61,8 @@ Enemy.prototype.draw = function () {
                 }
                 break;
             case this.EnemyCode.Type1: //敌机
-                this.img.src = this.emyPlaneImg;
-                this.width = this.img.width;
-                this.height = this.img.height;
                 this.ctx.drawImage(this.img, this.x, this.y);
+                drawBlood(this.director, this.indexblood, this.maxblood, this.x+this.width/4, this.y, this.x+this.width/4+this.width/2, this.y, 3, 10,1,"red");
                 this.y++;
                 if (this.y > -this.height) {
                     //自动攻击（1秒2颗子弹）
@@ -72,14 +72,12 @@ Enemy.prototype.draw = function () {
                 }
                 break;
             case this.EnemyCode.Type2: //可横向移动敌机
-                this.img.src = "img/enemy_small_2_special.png";
-                this.width = this.img.width;
-                this.height = this.img.height;
                 this.ctx.drawImage(this.img, this.x, this.y);
+                drawBlood(this.director, this.indexblood, this.maxblood, this.x+this.width/4, this.y, this.x+this.width/4+this.width/2, this.y, 3, 10,1,"red");
                 this.y++;
                 if (this.y >= -this.height) {
                     this.x -= this.moveX;
-                    if (this.x > (this.director.width-this.width) || this.x < 0) {
+                    if (this.x > (this.director.width - this.width) || this.x < 0) {
                         this.moveX = -this.moveX;
                     }
                     //自动攻击（1秒2颗子弹）
@@ -89,6 +87,32 @@ Enemy.prototype.draw = function () {
                 }
                 break;
             case this.EnemyCode.Type3:
+                this.ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+                drawBlood(this.director, this.indexblood, this.maxblood, this.x+this.width/4, this.y, this.x+this.width/4+this.width/2, this.y, 3, 10,1,"red");
+                if (this.indexY < (this.director.width - this.width) / 4) {
+                    this.y++;
+                    if (this.y === (this.director.width - this.width) / 4) {
+                        this.indexY = this.y;
+                    }
+                }
+                if (this.indexY === (this.director.width - this.width) / 4) {
+                    this.y--;
+                    if (this.y === 0) {
+                        this.indexY = this.y;
+                    }
+                }
+                if (this.initX > 0) {
+                    this.x--;
+                    if (this.x === 0) {
+                        this.initX = this.x;
+                    }
+                }
+                if (this.initX === 0) {
+                    this.x++;
+                    if (this.x === this.director.width - this.width) {
+                        this.initX = this.x;
+                    }
+                }
                 break
         }
     } else {//爆炸
@@ -119,4 +143,59 @@ Enemy.prototype.fire = function (removeX, removeY) {
             this.bullets.push(new Bullet(this.director, removeX, removeY, 180, false));
             break;
     }
+};
+
+/**
+ * 初始化
+ * describe:
+ */
+Enemy.prototype.init = function () {
+    switch (this.EnemyType) {
+        case this.EnemyCode.Type0://障碍物（eg：陨石）
+            this.img.src = "img/Rock.png";
+            this.width = 66 * 2 / 3;
+            this.height = 70 * 2 / 3;
+
+            this.indexblood=200;
+            this.maxblood=200;
+            break;
+        case this.EnemyCode.Type1: //敌机
+            this.img.src = this.emyPlaneImg;
+            this.width = 32;
+            this.height = 32;
+
+            this.indexblood=300;
+            this.maxblood=300;
+            break;
+        case this.EnemyCode.Type2: //可横向移动敌机
+            this.img.src = "img/enemy_small_2_special.png";
+            this.width = 32;
+            this.height = 32;
+
+            this.indexblood=300;
+            this.maxblood=300;
+            break;
+        case this.EnemyCode.Type3:
+            this.img.src = "img/boss.png";
+            this.width = 100;
+            this.height = 100;
+            console.log(this.width);
+            console.log(this.height);
+            this.x = this.director.width / 2 - this.width / 2;
+            this.y = 0;
+            this.initX = this.x;
+            this.indexY = this.y;
+
+            this.indexblood=5000;
+            this.maxblood=5000;
+            break
+    }
+};
+
+/**
+ * 设置敌人类型和子弹类型
+ * describe:设置敌人的类型，比如出现boss
+ */
+Enemy.prototype.setEmyType = function (emyType) {
+    this.EnemyType = emyType;
 };

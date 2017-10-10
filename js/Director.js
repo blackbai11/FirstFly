@@ -5,6 +5,7 @@ function Director() {
     this.back = null;//背景
     this.players = [];//玩家
     this.enimes = [];//敌人集合
+    this.hasBoss = false;//boss未出现
     this.bullets = [];//子弹集合
     this.props = [];//道具集合
     this.grade = null;//分数
@@ -63,14 +64,16 @@ Director.prototype.gameLoop = function () {
      */
     if (temp.time % 60 === 0) {
         //添加敌人(1s添加一个)
-        temp.enimes.push(new Enemy(temp));
+        var enemy = new Enemy(temp);
+        enemy.init();
+        temp.enimes.push(enemy);
     }
     temp.enimes.forEach(function (emy) {
         emy.draw();
         //敌人与玩家碰撞检测
         temp.players.forEach(function (player) {
             if (IsCollided(emy, player)) {
-                emy.exploded = true;
+                // emy.exploded = true;
                 player.exploded = true;
             }
         });
@@ -85,9 +88,12 @@ Director.prototype.gameLoop = function () {
             temp.enimes.forEach(function (emy) {
                 if (!bullet.exploded) {
                     if (IsCollided(emy, bullet)) {
-                        emy.exploded = true;
                         bullet.exploded = true;
-                        temp.grade.setGrade(100);
+                        emy.indexblood -= 100;
+                        if (emy.indexblood <= 0) {
+                            emy.exploded = true;
+                            temp.grade.setGrade(100);
+                        }
                     }
                 }
             })
@@ -95,8 +101,11 @@ Director.prototype.gameLoop = function () {
             //敌人子弹与玩家的碰撞检测
             temp.players.forEach(function (player) {
                 if (IsCollided(bullet, player)) {
+                    player.indexblood -= 100;
                     bullet.exploded = true;
-                    player.exploded = true;
+                    if (player.indexblood <= 0) {
+                        player.exploded = true;
+                    }
                 }
             })
         }
@@ -105,7 +114,14 @@ Director.prototype.gameLoop = function () {
      * 6.画分数
      */
     temp.grade.draw();
-
+    if (this.grade.IndexGrade === 100 && !this.hasBoss) {
+        //添加boss
+        var boss = new Enemy(temp);
+        boss.setEmyType(3);
+        boss.init();
+        temp.enimes.push(boss);
+        this.hasBoss = true;
+    }
 
     /***
      * 添加道具
@@ -129,16 +145,11 @@ Director.prototype.gameLoop = function () {
         temp.players.forEach(function (player) {
             if (IsCollided(prop, player)) {
                 player.BulletType = prop.propTypeCode;
-                console.log("propTypeCode:" + prop.propTypeCode);
+                // console.log("propTypeCode:" + prop.propTypeCode);
                 prop.exploded = true;
             }
         });
     });
-
-
-    // if (temp.time % 60 === 0 ) {
-    //     console.log(parseInt(Math.random() * (3)));
-    // }
 
 };
 

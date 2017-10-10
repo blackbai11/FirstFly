@@ -12,7 +12,7 @@ function Player(director) {
     this.explodedImg.src = "img/explosionEnemy.png";
     this.explodeIndex = 0;
     this.isSecondPlayer = false;
-    this.isAutoFire = false;
+    this.isAutoFire = true;
     this.PropCode = {
         Type0: 0, //默认
         Type1: 1,
@@ -22,6 +22,9 @@ function Player(director) {
     };
     this.bullets = director.bullets;
     this.BulletType = this.PropCode.Type0;
+
+    this.indexblood = 1000;
+    this.maxblood = 1000;
 }
 
 /**
@@ -31,6 +34,7 @@ function Player(director) {
 Player.prototype.draw = function () {
     if (!this.exploded) {
         this.ctx.drawImage(this.img, this.x, this.y);
+        drawBlood(this.director, this.indexblood, this.maxblood, this.x + this.width / 4, this.y, this.x + this.width / 4 + this.width / 2, this.y, 3, 10, 1, "red");
         if (!this.isSecondPlayer) {
             //位置移动
             this.setKeyDirection(keyStatus.keyLeftStatus, keyStatus.keyRightStatus, keyStatus.keyUpStatus, keyStatus.keyDownStatus);
